@@ -219,9 +219,8 @@
       <div class="col-md-3">
         <div class="fw-semibold mb-2 text-dark">Liên hệ</div>
         <ul style="list-style:none;padding:0;font-size:.82rem;color:#666" id="footContact">
-          <li class="mb-1"><i class="bi bi-geo-alt me-1 text-danger"></i>Địa chỉ UBND phường</li>
-          <li class="mb-1"><i class="bi bi-telephone me-1 text-danger"></i></li>
-          <li class="mb-1"><i class="bi bi-envelope me-1 text-danger"></i></li>
+          <li class="mb-1"><i class="bi bi-geo-alt me-1 text-danger"></i>275 Nguyễn Trãi, phường Cầu Ông Lãnh, TP.HCM</li>
+          <li class="mb-1"><i class="bi bi-envelope me-1 text-danger"></i>congdoanp.cauonglanh@gmail.com</li>
         </ul>
       </div>
     </div>
@@ -242,7 +241,6 @@
   });
   const fc = document.getElementById('footContact');
   fc.innerHTML = `<li class="mb-1"><i class="bi bi-geo-alt me-1 text-danger"></i>${escHtml(APP_CONFIG.address)}</li>
-    <li class="mb-1"><i class="bi bi-telephone me-1 text-danger"></i>${escHtml(APP_CONFIG.phone)}</li>
     <li class="mb-1"><i class="bi bi-envelope me-1 text-danger"></i>${escHtml(APP_CONFIG.email)}</li>`;
 
   // Check admin session

@@ -13,9 +13,8 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const APP_CONFIG = {
   orgName:    'Công đoàn Phường Cầu Ông Lãnh',
   orgSubName: 'Trực thuộc Liên đoàn Lao động TP Hồ Chí Minh ',
-  phone:      '0903106820',
   email:      'congdoanp.cauonglanh@gmail.com',
-  address:    '59 Hồ Hảo Hớn, phường Cô Giang'
+  address:    '275 Nguyễn Trãi, phường Cầu Ông Lãnh, TP.HCM'
 };
 
 // ============================================================

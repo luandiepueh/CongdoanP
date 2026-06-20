@@ -128,7 +128,6 @@
           <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Phản hồi trong vòng <strong>3–5 ngày làm việc</strong></li>
           <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Nội dung được <strong>bảo mật</strong>, chỉ Ban thường trực xem</li>
           <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Tra cứu bằng <strong>tên đã gửi</strong> để xem phản hồi</li>
-          <li><i class="bi bi-telephone-fill text-danger me-2"></i>Liên hệ trực tiếp: <strong id="cfgPhone"></strong></li>
         </ul>
       </div>
     </div>
@@ -152,7 +151,6 @@
 <script>
   document.getElementById('topDate').textContent = new Date().toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});
   document.getElementById('navOrg').textContent = APP_CONFIG.orgName;
-  document.getElementById('cfgPhone').textContent = APP_CONFIG.phone;
   sb.auth.getSession().then(({data:{session}}) => { if(session) document.getElementById('adminNav').classList.remove('d-none'); });
 
   async function submitFb() {
