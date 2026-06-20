@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Tài liệu - Công Đoàn</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="bg-blob-1"></div><div class="bg-blob-2"></div><div class="bg-blob-3"></div>
+
+<div class="admin-layout">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="d-flex align-items-center gap-2">
+        <div style="width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem"><i class="bi bi-people-fill text-warning"></i></div>
+        <div><div class="s-title" id="sbOrg">Công Đoàn Cơ Sở</div><div class="s-sub">Ban Thường Trực</div></div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <div class="nav-section-label">Tổng quan</div>
+      <a href="index.html"     class="admin-nav-link"><i class="bi bi-speedometer2"></i>Dashboard</a>
+      <div class="nav-section-label">Quản lý nội dung</div>
+      <a href="thong-bao.html" class="admin-nav-link"><i class="bi bi-megaphone-fill"></i>Thông báo</a>
+      <a href="tai-lieu.html"  class="admin-nav-link active"><i class="bi bi-folder2-open"></i>Tài liệu</a>
+      <a href="gop-y.html"     class="admin-nav-link"><i class="bi bi-chat-left-dots-fill"></i>Góp ý</a>
+      <div class="nav-section-label">Hệ thống</div>
+      <a href="quan-tri-vien.html" class="admin-nav-link"><i class="bi bi-person-gear"></i>Quản trị viên</a>
+      <a href="../index.html"  class="admin-nav-link" target="_blank"><i class="bi bi-box-arrow-up-right"></i>Xem trang công khai</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="admin-nav-link w-100 border-0 bg-transparent text-start" onclick="adminLogout()" style="color:rgba(255,255,255,.6)"><i class="bi bi-box-arrow-left"></i>Đăng xuất</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><div class="page-title">Quản lý Tài liệu</div><div class="page-sub">Upload file hoặc thêm link tài liệu cho đoàn viên tải xuống</div></div>
+      <button class="btn btn-danger fw-semibold" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i>Thêm tài liệu</button>
+    </div>
+
+    <div class="admin-content">
+      <!-- FILTER -->
+      <div class="app-card mb-4">
+        <div class="card-body p-3 d-flex gap-2 flex-wrap align-items-center">
+          <select class="form-select form-select-sm w-auto" id="filterCat" onchange="loadDocs()">
+            <option value="">Tất cả loại</option>
+            <option>Biểu mẫu</option>
+            <option>Hướng dẫn</option>
+            <option>Quy chế</option>
+            <option>Quyết định</option>
+            <option>Khác</option>
+          </select>
+          <div class="input-group input-group-sm" style="max-width:260px">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchBox" placeholder="Tìm tài liệu..." oninput="renderFiltered()">
+          </div>
+          <span class="ms-auto text-muted" style="font-size:.83rem"><span id="docCount">0</span> tài liệu</span>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="app-card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table data-table mb-0">
+              <thead>
+                <tr>
+                  <th>Tên tài liệu</th>
+                  <th style="width:120px">Loại</th>
+                  <th style="width:70px">Phiên bản</th>
+                  <th style="width:80px">Lượt tải</th>
+                  <th style="width:110px">Ngày cập nhật</th>
+                  <th style="width:110px">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="docBody">
+                <tr><td colspan="6" class="text-center py-4"><div class="spinner-border spinner-border-sm text-danger"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL THÊM/SỬA -->
+<div class="modal fade" id="docModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header" style="background:var(--primary);color:#fff">
+        <h5 class="modal-title" id="modalTitle">Thêm tài liệu mới</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editId">
+        <div class="mb-3">
+          <label class="form-label">Tên tài liệu <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="fTitle" placeholder="VD: Biểu mẫu quyết toán kinh phí CĐ năm 2026">
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Loại <span class="text-danger">*</span></label>
+            <select class="form-select" id="fCat">
+              <option>Biểu mẫu</option>
+              <option>Hướng dẫn</option>
+              <option>Quy chế</option>
+              <option>Quyết định</option>
+              <option>Khác</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phiên bản</label>
+            <input type="text" class="form-control" id="fVersion" placeholder="VD: v2.1, 2026...">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Mô tả ngắn</label>
+          <input type="text" class="form-control" id="fDesc" placeholder="Mô tả nội dung tài liệu...">
+        </div>
+
+        <!-- FILE UPLOAD hoặc LINK -->
+        <div class="mb-1">
+          <label class="form-label">Nguồn tài liệu <span class="text-danger">*</span></label>
+          <ul class="nav nav-tabs mb-2" id="srcTab">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchSrc(event,'upload')">📁 Upload file</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchSrc(event,'link')">🔗 Dán link (Drive/URL)</a></li>
+          </ul>
+          <div id="srcUpload">
+            <input type="file" class="form-control" id="fFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+            <small class="text-muted">PDF, Word, Excel, PowerPoint — tối đa 50MB. Để trống nếu chỉ sửa thông tin.</small>
+            <div id="currentFile" class="mt-1 text-muted" style="font-size:.82rem"></div>
+          </div>
+          <div id="srcLink" class="d-none">
+            <input type="url" class="form-control" id="fLink" placeholder="https://drive.google.com/file/d/...">
+            <small class="text-muted">Dán link chia sẻ từ Google Drive hoặc URL công khai khác</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-danger fw-semibold px-4" onclick="saveDoc()">
+          <i class="bi bi-save me-1"></i><span id="saveBtnTxt">Thêm tài liệu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script>
+  let allDocs = [], srcMode = 'upload';
+  const modal = new bootstrap.Modal(document.getElementById('docModal'));
+
+  (async () => {
+    const session = await requireAdmin('login.html');
+    if (!session) return;
+    document.getElementById('sbOrg').textContent = APP_CONFIG.orgName;
+    loadDocs();
+  })();
+
+  async function loadDocs() {
+    const cat = document.getElementById('filterCat').value;
+    let q = sb.from('documents').select('*').order('category').order('created_at',{ascending:false});
+    if (cat) q = q.eq('category', cat);
+    const { data } = await q;
+    allDocs = data || [];
+    renderFiltered();
+  }
+
+  function renderFiltered() {
+    const s = document.getElementById('searchBox').value.toLowerCase();
+    const list = allDocs.filter(d => !s || d.title.toLowerCase().includes(s) || (d.description||'').toLowerCase().includes(s));
+    document.getElementById('docCount').textContent = list.length;
+    const tbody = document.getElementById('docBody');
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Không có tài liệu nào.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(d => {
+      const m = DOC_META[d.category] || DOC_META['Khác'];
+      return `<tr>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <span style="font-size:1.4rem">${m.icon}</span>
+            <div>
+              <div class="fw-semibold">${escHtml(d.title)}</div>
+              ${d.description ? `<div class="text-muted" style="font-size:.78rem">${escHtml(d.description)}</div>` : ''}
+            </div>
+          </div>
+        </td>
+        <td>${catBadge(d.category)}</td>
+        <td class="text-muted text-center">${escHtml(d.version||'')}</td>
+        <td class="text-center"><span class="badge text-bg-light">${d.download_count||0}</span></td>
+        <td class="text-muted" style="font-size:.82rem">${fmtDate(d.updated_at||d.created_at)}</td>
+        <td>
+          <a href="${escHtml(d.file_url)}" target="_blank" class="btn btn-sm btn-outline-success me-1" title="Xem/Tải"><i class="bi bi-download"></i></a>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="editDoc('${d.id}')" title="Sửa"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="delDoc('${d.id}')" title="Xóa"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function switchSrc(e, mode) {
+    e.preventDefault();
+    srcMode = mode;
+    document.querySelectorAll('#srcTab .nav-link').forEach((el,i) => el.classList.toggle('active', (i===0 && mode==='upload')||(i===1 && mode==='link')));
+    document.getElementById('srcUpload').classList.toggle('d-none', mode !== 'upload');
+    document.getElementById('srcLink').classList.toggle('d-none', mode !== 'link');
+  }
+
+  function openModal(d = null) {
+    document.getElementById('editId').value    = d?.id || '';
+    document.getElementById('fTitle').value   = d?.title || '';
+    document.getElementById('fCat').value     = d?.category || 'Biểu mẫu';
+    document.getElementById('fVersion').value = d?.version || '';
+    document.getElementById('fDesc').value    = d?.description || '';
+    document.getElementById('fFile').value    = '';
+    document.getElementById('fLink').value    = '';
+    document.getElementById('currentFile').textContent = d?.file_name ? `File hiện tại: ${d.file_name}` : '';
+    document.getElementById('modalTitle').textContent  = d ? 'Chỉnh sửa tài liệu' : 'Thêm tài liệu mới';
+    document.getElementById('saveBtnTxt').textContent  = d ? 'Lưu thay đổi' : 'Thêm tài liệu';
+    switchSrc({ preventDefault:()=>{} }, 'upload');
+    modal.show();
+  }
+
+  function editDoc(id) { openModal(allDocs.find(d => d.id === id)); }
+
+  async function saveDoc() {
+    const title   = document.getElementById('fTitle').value.trim();
+    const cat     = document.getElementById('fCat').value;
+    const version = document.getElementById('fVersion').value.trim();
+    const desc    = document.getElementById('fDesc').value.trim();
+    const file    = document.getElementById('fFile').files[0];
+    const link    = document.getElementById('fLink').value.trim();
+    const editId  = document.getElementById('editId').value;
+    const existing = editId ? allDocs.find(d => d.id === editId) : null;
+
+    if (!title) { showToast('Vui lòng nhập tên tài liệu','danger'); return; }
+    if (!editId && !file && !link) { showToast('Vui lòng upload file hoặc dán link tài liệu','danger'); return; }
+
+    showLoading(true);
+    let file_url  = existing?.file_url || '';
+    let file_name = existing?.file_name || '';
+
+    if (srcMode === 'upload' && file) {
+      const path = `docs/${Date.now()}_${file.name.replace(/\s/g,'_')}`;
+      const { error: upErr } = await sb.storage.from('tai-lieu').upload(path, file);
+      if (upErr) { showLoading(false); showToast('Upload file thất bại: '+upErr.message,'danger'); return; }
+      const { data: urlData } = sb.storage.from('tai-lieu').getPublicUrl(path);
+      file_url  = urlData.publicUrl;
+      file_name = file.name;
+    } else if (srcMode === 'link' && link) {
+      file_url  = link;
+      file_name = link.split('/').pop().split('?')[0] || 'file';
+    }
+
+    const payload = { title, category: cat, version, description: desc, file_url, file_name, updated_at: new Date().toISOString() };
+    let error;
+    if (editId) {
+      ({ error } = await sb.from('documents').update(payload).eq('id', editId));
+    } else {
+      ({ error } = await sb.from('documents').insert({ ...payload, download_count: 0, created_at: new Date().toISOString() }));
+    }
+    showLoading(false);
+    if (error) { showToast('Lỗi: '+error.message,'danger'); return; }
+    showToast(editId ? 'Đã cập nhật tài liệu!' : 'Đã thêm tài liệu mới!','success');
+    modal.hide();
+    loadDocs();
+  }
+
+  async function delDoc(id) {
+    const d = allDocs.find(x => x.id === id);
+    if (!confirm(`Xóa tài liệu "${d?.title}"?`)) return;
+    const { error } = await sb.from('documents').delete().eq('id', id);
+    if (error) { showToast('Xóa thất bại','danger'); return; }
+    showToast('Đã xóa tài liệu','success');
+    loadDocs();
+  }
+</script>
+</body>
+</html>

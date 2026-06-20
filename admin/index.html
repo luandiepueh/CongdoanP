@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Quản trị Công Đoàn</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="bg-blob-1"></div><div class="bg-blob-2"></div><div class="bg-blob-3"></div>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="d-flex align-items-center gap-2">
+        <div style="width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem">
+          <i class="bi bi-people-fill text-warning"></i>
+        </div>
+        <div>
+          <div class="s-title" id="sbOrg">Công Đoàn Cơ Sở</div>
+          <div class="s-sub">Ban Thường Trực</div>
+        </div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <div class="nav-section-label">Tổng quan</div>
+      <a href="index.html" class="admin-nav-link active"><i class="bi bi-speedometer2"></i>Dashboard</a>
+      <div class="nav-section-label">Quản lý nội dung</div>
+      <a href="thong-bao.html" class="admin-nav-link"><i class="bi bi-megaphone-fill"></i>Thông báo</a>
+      <a href="tai-lieu.html"  class="admin-nav-link"><i class="bi bi-folder2-open"></i>Tài liệu</a>
+      <a href="gop-y.html"     class="admin-nav-link"><i class="bi bi-chat-left-dots-fill"></i>Góp ý <span id="sbBadge" class="badge bg-danger ms-auto d-none"></span></a>
+      <div class="nav-section-label">Hệ thống</div>
+      <a href="quan-tri-vien.html" class="admin-nav-link"><i class="bi bi-person-gear"></i>Quản trị viên</a>
+      <a href="../index.html" class="admin-nav-link" target="_blank"><i class="bi bi-box-arrow-up-right"></i>Xem trang công khai</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="admin-nav-link w-100 border-0 bg-transparent text-start" onclick="adminLogout()" style="color:rgba(255,255,255,.6)">
+        <i class="bi bi-box-arrow-left"></i>Đăng xuất
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Tổng quan hệ thống Công Đoàn Cơ Sở</div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-success" style="font-size:.78rem"><i class="bi bi-circle-fill me-1" style="font-size:.5rem"></i>Online</span>
+        <span class="text-muted" style="font-size:.82rem" id="adminEmail"></span>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- STATS -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fce4ec"><i class="bi bi-megaphone-fill text-danger"></i></div>
+            <div><div class="stat-val" id="sAnc">—</div><div class="stat-label">Thông báo</div></div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fff3e0"><i class="bi bi-folder2-open" style="color:#e65100"></i></div>
+            <div><div class="stat-val" id="sDoc">—</div><div class="stat-label">Tài liệu</div></div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#e8f5e9"><i class="bi bi-chat-left-dots-fill text-success"></i></div>
+            <div><div class="stat-val" id="sFbAll">—</div><div class="stat-label">Tổng góp ý</div></div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fff8e1"><i class="bi bi-clock-fill" style="color:#f57f17"></i></div>
+            <div><div class="stat-val text-warning" id="sFbPending">—</div><div class="stat-label">Chờ phản hồi</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+
+        <!-- RECENT FEEDBACK -->
+        <div class="col-lg-7">
+          <div class="app-card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <span><i class="bi bi-chat-left-dots-fill me-2"></i>Góp ý chờ xử lý</span>
+              <a href="gop-y.html" class="btn btn-sm btn-light text-danger fw-semibold">Xem tất cả</a>
+            </div>
+            <div class="card-body p-0">
+              <div id="pendingFb">
+                <div class="text-center py-4"><div class="spinner-border spinner-border-sm text-danger"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT ANNOUNCEMENTS -->
+        <div class="col-lg-5">
+          <div class="app-card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <span><i class="bi bi-megaphone-fill me-2"></i>Thông báo gần đây</span>
+              <a href="thong-bao.html" class="btn btn-sm btn-light text-danger fw-semibold">Quản lý</a>
+            </div>
+            <div class="card-body p-0">
+              <div id="recentAnc">
+                <div class="text-center py-4"><div class="spinner-border spinner-border-sm text-danger"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script>
+  (async () => {
+    const session = await requireAdmin('../admin/login.html');
+    if (!session) return;
+    document.getElementById('adminEmail').textContent = session.user.email;
+    document.getElementById('sbOrg').textContent = APP_CONFIG.orgName;
+
+    const [
+      { count: ancCnt },
+      { count: docCnt },
+      { count: fbAll },
+      { count: fbPending },
+      { data: pendingFb },
+      { data: recentAnc }
+    ] = await Promise.all([
+      sb.from('announcements').select('*',{count:'exact',head:true}),
+      sb.from('documents').select('*',{count:'exact',head:true}),
+      sb.from('feedback').select('*',{count:'exact',head:true}),
+      sb.from('feedback').select('*',{count:'exact',head:true}).eq('status','Chờ xử lý'),
+      sb.from('feedback').select('*').eq('status','Chờ xử lý').order('created_at',{ascending:false}).limit(8),
+      sb.from('announcements').select('*').order('created_at',{ascending:false}).limit(6)
+    ]);
+
+    document.getElementById('sAnc').textContent      = ancCnt ?? 0;
+    document.getElementById('sDoc').textContent      = docCnt ?? 0;
+    document.getElementById('sFbAll').textContent    = fbAll  ?? 0;
+    document.getElementById('sFbPending').textContent = fbPending ?? 0;
+
+    if (fbPending > 0) {
+      const b = document.getElementById('sbBadge');
+      b.textContent = fbPending;
+      b.classList.remove('d-none');
+    }
+
+    // Pending feedback list
+    const pfEl = document.getElementById('pendingFb');
+    if (!pendingFb?.length) {
+      pfEl.innerHTML = '<div class="empty-state" style="padding:1.5rem"><i class="bi bi-check2-all" style="font-size:2.5rem;color:#2e7d32;opacity:.6"></i><p class="mt-2 mb-0 text-success fw-semibold">Tất cả đã được phản hồi!</p></div>';
+    } else {
+      pfEl.innerHTML = `<div class="list-group list-group-flush">${pendingFb.map(f => `
+        <div class="list-group-item py-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="fw-semibold">${escHtml(f.sender_name)} <small class="text-muted fw-normal">${f.unit?'— '+escHtml(f.unit):''}</small></div>
+            <small class="text-muted flex-shrink-0 ms-2">${fmtDate(f.created_at)}</small>
+          </div>
+          <div class="text-muted mt-1" style="font-size:.83rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escHtml(f.content)}</div>
+          <a href="gop-y.html" class="btn btn-xs btn-outline-danger mt-2" style="font-size:.78rem;padding:.2rem .6rem;border-radius:6px"><i class="bi bi-reply me-1"></i>Phản hồi</a>
+        </div>`).join('')}</div>`;
+    }
+
+    // Recent announcements list
+    const raEl = document.getElementById('recentAnc');
+    if (!recentAnc?.length) {
+      raEl.innerHTML = '<div class="empty-state" style="padding:1.5rem"><i class="bi bi-megaphone" style="font-size:2.5rem"></i><p class="mt-2 mb-0">Chưa có thông báo</p></div>';
+    } else {
+      raEl.innerHTML = `<div class="list-group list-group-flush">${recentAnc.map(a => `
+        <div class="list-group-item py-3 d-flex gap-2 align-items-start">
+          ${a.is_pinned ? '<i class="bi bi-pin-fill text-warning flex-shrink-0 mt-1"></i>' : '<i class="bi bi-megaphone text-danger flex-shrink-0 mt-1"></i>'}
+          <div class="flex-grow-1 min-width-0">
+            <div class="fw-semibold text-truncate">${escHtml(a.title)}</div>
+            <small class="text-muted">${fmtDate(a.created_at)} · ${escHtml(a.category)}</small>
+          </div>
+        </div>`).join('')}</div>`;
+    }
+  })();
+</script>
+</body>
+</html>

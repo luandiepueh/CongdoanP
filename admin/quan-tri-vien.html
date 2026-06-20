@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Quản trị viên - Công Đoàn</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="bg-blob-1"></div><div class="bg-blob-2"></div><div class="bg-blob-3"></div>
+
+<div class="admin-layout">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="d-flex align-items-center gap-2">
+        <div style="width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem"><i class="bi bi-people-fill text-warning"></i></div>
+        <div><div class="s-title" id="sbOrg">Công Đoàn Cơ Sở</div><div class="s-sub">Ban Thường Trực</div></div>
+      </div>
+    </div>
+    <nav class="admin-nav">
+      <div class="nav-section-label">Tổng quan</div>
+      <a href="index.html"          class="admin-nav-link"><i class="bi bi-speedometer2"></i>Dashboard</a>
+      <div class="nav-section-label">Quản lý nội dung</div>
+      <a href="thong-bao.html"      class="admin-nav-link"><i class="bi bi-megaphone-fill"></i>Thông báo</a>
+      <a href="tai-lieu.html"       class="admin-nav-link"><i class="bi bi-folder2-open"></i>Tài liệu</a>
+      <a href="gop-y.html"          class="admin-nav-link"><i class="bi bi-chat-left-dots-fill"></i>Góp ý</a>
+      <div class="nav-section-label">Hệ thống</div>
+      <a href="quan-tri-vien.html"  class="admin-nav-link active"><i class="bi bi-person-gear"></i>Quản trị viên</a>
+      <a href="../index.html"       class="admin-nav-link" target="_blank"><i class="bi bi-box-arrow-up-right"></i>Xem trang công khai</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="admin-nav-link w-100 border-0 bg-transparent text-start" onclick="adminLogout()" style="color:rgba(255,255,255,.6)"><i class="bi bi-box-arrow-left"></i>Đăng xuất</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div class="page-title">Quản lý Quản trị viên</div>
+        <div class="page-sub">Thêm và phân quyền tài khoản quản trị hệ thống</div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-success" style="font-size:.78rem"><i class="bi bi-circle-fill me-1" style="font-size:.5rem"></i>Online</span>
+        <span class="text-muted" style="font-size:.82rem" id="adminEmail"></span>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- INFO BANNER -->
+      <div class="alert d-flex gap-3 align-items-start mb-4" style="background:rgba(255,193,7,.12);border:1px solid rgba(255,193,7,.35);border-radius:12px;color:rgba(255,255,255,.85)">
+        <i class="bi bi-info-circle-fill text-warning flex-shrink-0 mt-1" style="font-size:1.15rem"></i>
+        <div style="font-size:.88rem;line-height:1.65">
+          <strong>Hướng dẫn thêm quản trị viên mới:</strong><br>
+          Nhập email + mật khẩu tạm thời → hệ thống tạo tài khoản → gửi email &amp; mật khẩu cho người đó đăng nhập lần đầu.<br>
+          <span style="color:rgba(255,255,255,.55)">Lưu ý: Nếu Supabase bật "Confirm email", người dùng cần xác nhận email trước khi đăng nhập được.</span>
+        </div>
+      </div>
+
+      <!-- STATS + ACTION ROW -->
+      <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <div class="stat-card" style="min-width:180px;padding:.85rem 1.2rem">
+          <div class="stat-icon" style="background:#e8eaf6"><i class="bi bi-person-check-fill" style="color:#3949ab"></i></div>
+          <div><div class="stat-val" id="totalCount">—</div><div class="stat-label">Quản trị viên</div></div>
+        </div>
+        <button class="btn btn-primary-custom" onclick="openAddModal()">
+          <i class="bi bi-person-plus-fill me-2"></i>Thêm quản trị viên
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="app-card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table data-table mb-0">
+              <thead>
+                <tr>
+                  <th style="width:44px" class="text-center">STT</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th style="width:150px">Vai trò</th>
+                  <th style="width:120px">Ngày thêm</th>
+                  <th style="width:80px">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="profileBody">
+                <tr><td colspan="6" class="text-center py-4"><div class="spinner-border spinner-border-sm text-danger"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- MODAL THÊM QUẢN TRỊ VIÊN -->
+<div class="modal fade" id="addModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:480px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-person-plus-fill me-2"></i>Thêm quản trị viên mới</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="addErrMsg" class="alert alert-danger d-none" style="border-radius:10px;font-size:.87rem"></div>
+        <form id="addForm" autocomplete="off" onsubmit="return false">
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="fName" placeholder="VD: Nguyễn Văn A" autocomplete="off">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Email đăng nhập <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="fEmail" placeholder="VD: nguyenvana@email.com" autocomplete="off">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Vai trò</label>
+            <select class="form-select" id="fRole">
+              <option value="Biên tập viên">Biên tập viên — đăng thông báo, thêm file, trả lời góp ý</option>
+              <option value="Quản trị viên">Quản trị viên — toàn quyền (bao gồm quản lý tài khoản)</option>
+            </select>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label fw-semibold">Mật khẩu tạm <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="fPwd" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
+                <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('fPwd','eyePwd')"><i class="bi bi-eye" id="eyePwd"></i></button>
+              </div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-semibold">Xác nhận MK <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="fPwd2" placeholder="Nhập lại MK" autocomplete="new-password">
+                <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('fPwd2','eyePwd2')"><i class="bi bi-eye" id="eyePwd2"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="mt-2" style="font-size:.8rem;color:var(--text-muted)">
+            <i class="bi bi-shield-check me-1"></i>Sau khi tạo, hãy gửi email + mật khẩu này cho người đó để họ đăng nhập lần đầu.
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer d-flex gap-2 justify-content-end">
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-primary-custom btn-sm px-4" id="saveBtnAdd" onclick="doAddAdmin()">
+          <i class="bi bi-person-plus me-1"></i><span id="saveBtnTxt">Tạo tài khoản</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script>
+  let allProfiles = [];
+  const modal = new bootstrap.Modal(document.getElementById('addModal'));
+
+  // ===== INIT =====
+  (async () => {
+    const session = await requireAdmin('login.html');
+    if (!session) return;
+    document.getElementById('sbOrg').textContent   = APP_CONFIG.orgName;
+    document.getElementById('adminEmail').textContent = session.user.email;
+    loadProfiles();
+  })();
+
+  // ===== LOAD =====
+  async function loadProfiles() {
+    document.getElementById('profileBody').innerHTML =
+      '<tr><td colspan="6" class="text-center py-4"><div class="spinner-border spinner-border-sm text-danger"></div></td></tr>';
+
+    const { data, error } = await sb.from('admin_profiles').select('*').order('created_at', { ascending: true });
+    if (error) {
+      document.getElementById('profileBody').innerHTML =
+        `<tr><td colspan="6" class="text-center py-4 text-danger">Lỗi tải dữ liệu: ${escHtml(error.message)}</td></tr>`;
+      return;
+    }
+    allProfiles = data || [];
+    document.getElementById('totalCount').textContent = allProfiles.length;
+    renderProfiles();
+  }
+
+  function renderProfiles() {
+    const tbody = document.getElementById('profileBody');
+    if (!allProfiles.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5" style="color:var(--text-muted)">
+        <i class="bi bi-people" style="font-size:2.5rem;opacity:.4"></i>
+        <p class="mt-2 mb-0">Chưa có quản trị viên nào.<br>
+        <small>Nhấn <strong>Thêm quản trị viên</strong> hoặc chạy SQL trong Supabase để thêm tài khoản hiện tại của bạn.</small></p>
+      </td></tr>`;
+      return;
+    }
+    tbody.innerHTML = allProfiles.map((p, i) => `
+      <tr>
+        <td class="text-center" style="font-size:.82rem;color:var(--text-muted)">${i + 1}</td>
+        <td class="fw-semibold">${escHtml(p.full_name)}</td>
+        <td style="font-size:.85rem">${escHtml(p.email)}</td>
+        <td>${roleBadge(p.role)}</td>
+        <td style="font-size:.82rem;color:var(--text-muted)">${fmtDate(p.created_at)}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger py-1 px-2"
+                  onclick="delProfile('${p.id}', ${JSON.stringify(p.full_name)})"
+                  title="Xóa quyền quản trị">
+            <i class="bi bi-person-x"></i>
+          </button>
+        </td>
+      </tr>`).join('');
+  }
+
+  function roleBadge(role) {
+    return role === 'Quản trị viên'
+      ? `<span class="badge" style="background:#fce4ec;color:#b71c1c"><i class="bi bi-shield-fill-check me-1"></i>${escHtml(role)}</span>`
+      : `<span class="badge" style="background:#e3f2fd;color:#1565c0"><i class="bi bi-pencil-fill me-1"></i>${escHtml(role)}</span>`;
+  }
+
+  // ===== DELETE =====
+  async function delProfile(id, name) {
+    if (!confirm(`Xóa quyền quản trị của "${name}"?\n\nTài khoản Supabase vẫn còn nhưng người này sẽ không thể đăng nhập vào trang quản trị.`)) return;
+    showLoading(true);
+    const { error } = await sb.from('admin_profiles').delete().eq('id', id);
+    showLoading(false);
+    if (error) { showToast('Xóa thất bại: ' + error.message, 'danger'); return; }
+    showToast(`Đã xóa quyền quản trị của "${name}"`, 'success');
+    loadProfiles();
+  }
+
+  // ===== MODAL =====
+  function openAddModal() {
+    document.getElementById('addForm').reset();
+    document.getElementById('addErrMsg').classList.add('d-none');
+    document.getElementById('saveBtnTxt').textContent = 'Tạo tài khoản';
+    document.getElementById('saveBtnAdd').disabled = false;
+    modal.show();
+    setTimeout(() => document.getElementById('fName').focus(), 350);
+  }
+
+  function togglePwd(inputId, iconId) {
+    const inp = document.getElementById(inputId);
+    const ico = document.getElementById(iconId);
+    if (inp.type === 'password') { inp.type = 'text';     ico.className = 'bi bi-eye-slash'; }
+    else                         { inp.type = 'password'; ico.className = 'bi bi-eye'; }
+  }
+
+  // ===== ADD ADMIN =====
+  async function doAddAdmin() {
+    const fullName = document.getElementById('fName').value.trim();
+    const email    = document.getElementById('fEmail').value.trim();
+    const role     = document.getElementById('fRole').value;
+    const pwd      = document.getElementById('fPwd').value;
+    const pwd2     = document.getElementById('fPwd2').value;
+    const errEl    = document.getElementById('addErrMsg');
+    const btn      = document.getElementById('saveBtnAdd');
+
+    errEl.classList.add('d-none');
+
+    if (!fullName)      { showErr(errEl, 'Vui lòng nhập họ tên.'); return; }
+    if (!email)         { showErr(errEl, 'Vui lòng nhập email.'); return; }
+    if (pwd.length < 6) { showErr(errEl, 'Mật khẩu phải có ít nhất 6 ký tự.'); return; }
+    if (pwd !== pwd2)   { showErr(errEl, 'Mật khẩu xác nhận không khớp.'); return; }
+
+    btn.disabled = true;
+    document.getElementById('saveBtnTxt').textContent = 'Đang tạo...';
+    showLoading(true);
+
+    // Lưu session hiện tại để khôi phục sau khi signUp
+    const { data: { session: curSession } } = await sb.auth.getSession();
+    const savedTokens = curSession
+      ? { access_token: curSession.access_token, refresh_token: curSession.refresh_token }
+      : null;
+
+    // Tạo tài khoản Supabase Auth mới
+    const { data, error } = await sb.auth.signUp({ email, password: pwd });
+
+    // Khôi phục session admin ngay lập tức (phòng trường hợp signUp thay session)
+    if (savedTokens) {
+      try { await sb.auth.setSession(savedTokens); } catch (_) {}
+    }
+
+    if (error) {
+      showLoading(false);
+      btn.disabled = false;
+      document.getElementById('saveBtnTxt').textContent = 'Tạo tài khoản';
+      const msg = error.message.toLowerCase().includes('already registered')
+        ? 'Email này đã có tài khoản. Để thêm vào danh sách admin, hãy chạy SQL thủ công trong Supabase.'
+        : 'Lỗi tạo tài khoản: ' + error.message;
+      showErr(errEl, msg);
+      return;
+    }
+
+    if (!data?.user?.id) {
+      showLoading(false);
+      btn.disabled = false;
+      document.getElementById('saveBtnTxt').textContent = 'Tạo tài khoản';
+      showErr(errEl, 'Không lấy được thông tin tài khoản mới. Vui lòng thử lại.');
+      return;
+    }
+
+    // Ghi vào bảng admin_profiles
+    const { error: profErr } = await sb.from('admin_profiles').insert({
+      id: data.user.id,
+      full_name: fullName,
+      email: email,
+      role: role
+    });
+
+    showLoading(false);
+    btn.disabled = false;
+    document.getElementById('saveBtnTxt').textContent = 'Tạo tài khoản';
+
+    if (profErr) {
+      showErr(errEl, 'Tạo tài khoản xong nhưng lưu hồ sơ thất bại: ' + profErr.message);
+      return;
+    }
+
+    showToast(`Đã tạo tài khoản quản trị viên "${fullName}" thành công!`, 'success');
+    modal.hide();
+    loadProfiles();
+  }
+
+  function showErr(el, msg) {
+    el.textContent = msg;
+    el.classList.remove('d-none');
+  }
+</script>
+</body>
+</html>
