@@ -56,8 +56,7 @@
         <i class="bi bi-info-circle-fill text-warning flex-shrink-0 mt-1" style="font-size:1.15rem"></i>
         <div style="font-size:.88rem;line-height:1.65">
           <strong>Hướng dẫn thêm quản trị viên mới:</strong><br>
-          Nhập email + mật khẩu tạm thời → hệ thống tạo tài khoản → gửi email &amp; mật khẩu cho người đó đăng nhập lần đầu.<br>
-          <span style="color:rgba(255,255,255,.55)">Lưu ý: Nếu Supabase bật "Confirm email", người dùng cần xác nhận email trước khi đăng nhập được.</span>
+          Nhập email + mật khẩu tạm thời → hệ thống tạo tài khoản → gửi email &amp; mật khẩu cho người đó đăng nhập lần đầu.
         </div>
       </div>
 
@@ -199,7 +198,7 @@
       tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5" style="color:var(--text-muted)">
         <i class="bi bi-people" style="font-size:2.5rem;opacity:.4"></i>
         <p class="mt-2 mb-0">Chưa có quản trị viên nào.<br>
-        <small>Nhấn <strong>Thêm quản trị viên</strong> hoặc chạy SQL trong Supabase để thêm tài khoản hiện tại của bạn.</small></p>
+        <small>Nhấn <strong>Thêm quản trị viên</strong> để thêm tài khoản mới.</small></p>
       </td></tr>`;
       return;
     }
@@ -228,7 +227,7 @@
 
   // ===== DELETE =====
   async function delProfile(id, name) {
-    if (!confirm(`Xóa quyền quản trị của "${name}"?\n\nTài khoản Supabase vẫn còn nhưng người này sẽ không thể đăng nhập vào trang quản trị.`)) return;
+    if (!confirm(`Xóa quyền quản trị của "${name}"?\n\nTài khoản đăng nhập vẫn còn nhưng người này sẽ không thể truy cập trang quản trị.`)) return;
     showLoading(true);
     const { error } = await sb.from('admin_profiles').delete().eq('id', id);
     showLoading(false);
@@ -294,7 +293,7 @@
       btn.disabled = false;
       document.getElementById('saveBtnTxt').textContent = 'Tạo tài khoản';
       const msg = error.message.toLowerCase().includes('already registered')
-        ? 'Email này đã có tài khoản. Để thêm vào danh sách admin, hãy chạy SQL thủ công trong Supabase.'
+        ? 'Email này đã có tài khoản trong hệ thống. Vui lòng kiểm tra lại hoặc dùng email khác.'
         : 'Lỗi tạo tài khoản: ' + error.message;
       showErr(errEl, msg);
       return;
