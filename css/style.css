@@ -83,6 +83,32 @@ body {
 .admin-link      { color: var(--accent) !important; }
 .admin-link.active { background: rgba(251,191,36,.15) !important; }
 
+/* ===== NAV LOGOS ===== */
+.nav-brand-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.nav-brand-center { flex-grow: 1; text-align: center; padding: 0 .75rem; }
+.nav-logo-box { width: 76px; min-width: 76px; display: flex; align-items: center; justify-content: center; }
+.nav-logo {
+  height: 60px; width: auto; max-width: 76px; object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.45));
+  transition: transform .2s;
+}
+.nav-logo:hover { transform: scale(1.06); }
+.nav-links-row {
+  display: flex; flex-direction: row; justify-content: center;
+  align-items: center; gap: .25rem; flex-wrap: wrap;
+  padding-top: .4rem; margin-bottom: 0;
+  list-style: none; padding-left: 0;
+}
+@media (max-width: 576px) {
+  .nav-logo { height: 40px; }
+  .nav-logo-box { width: 48px; min-width: 48px; }
+  .brand-name { font-size: .82rem; }
+}
+
 /* ===== HERO ===== */
 .hero {
   padding: 3.8rem 0 3.2rem;
