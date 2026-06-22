@@ -3,8 +3,9 @@
 ## Tech Stack
 - **Frontend:** HTML5 + Bootstrap 5 (CDN) + JavaScript thuần
 - **Backend/DB:** Supabase (PostgreSQL + Auth + Storage)
-- **Hosting:** Netlify (static site, auto-deploy từ GitHub)
-- **Repo GitHub:** https://github.com/luandiepueh/CongdoanP
+- **Hosting:** Cloudflare Pages (static site, auto-deploy từ GitHub)
+- **Repo GitHub:** https://github.com/luandiepueh/Congdoancauonglanh
+- **URL live:** https://congdoanp.pages.dev
 
 ## Cấu trúc thư mục
 ```
@@ -19,12 +20,12 @@ congdoan-supabase/
 │   ├── thong-bao.html      # Quản lý thông báo (Quill editor)
 │   ├── tai-lieu.html       # Quản lý tài liệu
 │   ├── gop-y.html          # Quản lý + phản hồi góp ý
-│   └── quan-tri-vien.html  # Quản lý tài khoản admin (MỚI)
+│   └── quan-tri-vien.html  # Quản lý tài khoản admin
 ├── js/
 │   └── config.js           # Supabase client + utils dùng chung
 ├── css/
 │   └── style.css           # CSS toàn app
-├── netlify.toml            # Cấu hình Netlify auto-deploy
+├── _headers                # Security headers cho Cloudflare Pages
 ├── setup.sql               # Schema gốc (đã chạy 1 lần)
 └── setup_admin_profiles.sql # Thêm bảng admin_profiles (đã chạy)
 ```
@@ -65,12 +66,14 @@ git add .
 git commit -m "mô tả thay đổi"
 git push
 ```
-Netlify tự deploy trong ~30 giây. Không cần copy-paste gì nữa.
+Cloudflare Pages tự deploy trong ~30–60 giây. Kiểm tra tại https://congdoanp.pages.dev.
 
-## Netlify
-- Site kết nối với GitHub repo `luandiepueh/CongdoanP`, branch `main`
-- File `netlify.toml` khai báo `publish = "."` (deploy từ root của repo)
-- Để đổi domain: Netlify Dashboard → Site settings → Domain management
+## Cloudflare Pages
+- Project kết nối với GitHub repo `luandiepueh/Congdoancauonglanh`, branch `main`
+- Build command: *(để trống — không cần build)*
+- Build output directory: `/` (root)
+- File `_headers` khai báo security headers (X-Frame-Options, Cache-Control admin, v.v.)
+- Để đổi domain: Cloudflare Dashboard → Pages → congdoanp → Custom domains
 
 ## Phân quyền vai trò
 | Vai trò | Quyền |
