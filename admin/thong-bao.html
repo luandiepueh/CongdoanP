@@ -249,18 +249,41 @@
     }
   });
 
-  // ===== CHẶN PASTE ẢNH Ở TẦNG DOM (mạnh hơn clipboard matchers) =====
+  // ===== CHẶN PASTE ẢNH (layer 1: DOM capture phase) =====
   quill.root.addEventListener('paste', function (e) {
-    const items = Array.from(e.clipboardData?.items || []);
-    const hasRawImage = items.some(item => item.type.startsWith('image/'));
-    if (hasRawImage) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      showToast('Không thể dán ảnh trực tiếp — nhấn nút 🖼️ trên toolbar để upload ảnh từ máy tính.', 'warning');
+    const cd = e.clipboardData;
+    if (!cd) return;
+
+    // Chặn file ảnh paste thẳng (Ctrl+V sau khi screenshot, copy file)
+    const items = Array.from(cd.items || []);
+    if (items.some(it => it.type.startsWith('image/'))) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      showToast('Không thể dán ảnh trực tiếp — nhấn nút 🖼️ trên toolbar để upload ảnh.', 'warning');
+      return;
+    }
+
+    // Chặn HTML paste có chứa ảnh base64 bên trong (copy từ Word, web...)
+    const htmlData = cd.getData('text/html') || '';
+    if (htmlData.includes('data:image')) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      showToast('Nội dung dán có chứa ảnh — nhấn nút 🖼️ trên toolbar để upload ảnh riêng.', 'warning');
+      return;
     }
   }, true);
 
-  // ===== SAFETY NET: undo nếu base64 vẫn lọt vào =====
+  // ===== CHẶN DRAG & DROP ẢNH VÀO EDITOR =====
+  quill.root.addEventListener('drop', function (e) {
+    const dt = e.dataTransfer;
+    if (!dt) return;
+    const files = Array.from(dt.files || []);
+    const htmlDrop = dt.getData('text/html') || '';
+    if (files.some(f => f.type.startsWith('image/')) || htmlDrop.includes('data:image')) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      showToast('Không thể kéo thả ảnh vào đây — nhấn nút 🖼️ trên toolbar để upload ảnh.', 'warning');
+    }
+  }, true);
+
+  // ===== SAFETY NET (layer 2): undo nếu base64 lọt qua =====
   quill.on('text-change', function (delta, _old, source) {
     if (source !== 'user') return;
     const hasBase64 = delta.ops.some(op =>
@@ -268,7 +291,7 @@
     );
     if (hasBase64) {
       quill.history.undo();
-      showToast('Ảnh paste bị chặn — dùng nút 🖼️ để upload từ máy tính.', 'warning');
+      showToast('Ảnh bị chặn — dùng nút 🖼️ để upload từ máy tính.', 'warning');
     }
   });
 
