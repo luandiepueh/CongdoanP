@@ -362,8 +362,21 @@
 
   // ===== SAVE =====
   async function saveAnc() {
-    const title   = document.getElementById('fTitle').value.trim();
-    const content = quill.root.innerHTML;
+    const title = document.getElementById('fTitle').value.trim();
+
+    // Làm sạch content: xóa mọi ảnh base64 còn sót (phòng khi paste blocker bị bypass)
+    const _rawHtml = quill.root.innerHTML;
+    const _tmpDiv  = document.createElement('div');
+    _tmpDiv.innerHTML = _rawHtml;
+    _tmpDiv.querySelectorAll('img[src^="data:"]').forEach(img => img.remove());
+    const content = _tmpDiv.innerHTML;
+
+    // Chặn nếu content vẫn quá lớn (> 200KB) — dấu hiệu còn dữ liệu nhị phân
+    if (content.length > 200000) {
+      showToast('Nội dung quá lớn. Nếu có ảnh, hãy dùng nút 🖼️ trên toolbar để upload thay vì dán trực tiếp.', 'warning');
+      return;
+    }
+
     const rawText = quill.getText().trim();
     const pinned  = document.getElementById('fPinned').checked;
     const file    = document.getElementById('fFile').files[0];
