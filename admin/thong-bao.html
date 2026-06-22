@@ -227,10 +227,12 @@
               showLoading(true);
               const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
               const path = `images/${Date.now()}_${safeName}`;
-              const { error } = await sb.storage.from('attachments').upload(path, file, { upsert: true });
+              // Không dùng upsert vì cần policy UPDATE riêng — path luôn unique nhờ timestamp
+              const { data: upData, error } = await sb.storage.from('attachments').upload(path, file);
               if (error) {
                 showLoading(false);
-                showToast('Upload ảnh thất bại: ' + error.message + ' — Vui lòng kiểm tra bucket "attachments" trong Supabase Storage đã được đặt Public chưa.', 'danger');
+                console.error('[IMG UPLOAD]', error);
+                showToast('Upload ảnh thất bại: ' + error.message, 'danger');
                 return;
               }
               const { data: urlData } = sb.storage.from('attachments').getPublicUrl(path);
